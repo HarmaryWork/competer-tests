@@ -1,7 +1,8 @@
-import { Page } from '@playwright/test';
+import { BrowserContext, Page } from '@playwright/test';
 
 class LoginPage {
     page: Page;
+    context: BrowserContext;
     emailInputSelector = '#outlined-email-input';
     passwordInputSelector = '#outlined-password-input';
     loginButtonSelector = 'text=Login';
@@ -10,13 +11,36 @@ class LoginPage {
     errorAlertSelector = 'text=Error!Auth error: Bad Request';
     requiredFieldErrorSelector = 'text=This field is required';
     emailFormatErrorSelector = 'text=It doesn\'t look like email';
+    loginApiUrl = "https://dev-api.trendos.io/api/v1/User/Login"
 
-    constructor(page: Page) {
+    constructor(page: Page, context: BrowserContext) {
         this.page = page;
+        this.context = context;
     }
 
     async navigate() {
         await this.page.goto('https://dev.trendos.io/login');
+    }
+
+    async apiLogin(email: string, password: string) {
+         const response = await this.page.request.post(this.loginApiUrl,{ data: {
+            password: password,
+            email: email,
+         }});
+         if (response.ok()) {
+           const responseBody = await response.json();
+           await this.context.addCookies([
+             {
+               name: "token",
+               value: responseBody.token,
+               domain: "dev.trendos.io",
+               expires: 60*60*24,
+               httpOnly: true,
+               secure: true,
+             },
+           ]);
+           return responseBody;
+         } 
     }
 
     async fillEmail(email: string) {

@@ -1,20 +1,23 @@
 import test, { expect } from "@playwright/test";
-import LoginPage from "./PageObjects/LoginPage";
+import LoginPage from "../pageObjects/LoginPage";
 import { allure } from "allure-playwright";
+import dotenv from 'dotenv';
 
-test.beforeEach(async ({ page }) => {
-    const loginPage = new LoginPage(page);
+dotenv.config();
+
+test.beforeEach(async ({ page, context }) => {
+    const loginPage = new LoginPage(page, context);
     await loginPage.navigate();
 })
 
 test.describe('Login form', () => {
-    test('should login with right creds', async ({ page }) => {
-        const loginPage = new LoginPage(page);
+    test('should login with right creds', async ({ page, context }) => {
+        const loginPage = new LoginPage(page, context);
         await allure.step('Fill email', async () => {
-            await loginPage.fillEmail('maria.h4rlamova@gmail.com');
+            await loginPage.fillEmail(process.env.EMAIL);
         })
         await allure.step('Fill password', async () => {
-            await loginPage.fillPassword('mariaaa_1');
+            await loginPage.fillPassword(process.env.PASSWORD);
         })
         await allure.attachment("search-results.png", await page.screenshot(), {
             contentType: "image/png",
@@ -33,19 +36,20 @@ test.describe('Login form', () => {
 
     });
 
-    test('should show error alert, if creds wrong', async ({ page }) => {
-        await page.locator('#outlined-email-input').fill('maria.h4rlamova@gmail.com');
-        await page.locator('#outlined-password-input').fill('zzzzzzzzz');
+    test('should show error alert, if creds wrong', async ({ page, context }) => {
+        const loginPage = new LoginPage(page, context);
+        await loginPage.fillEmail(process.env.EMAIL);
+        await loginPage.fillPassword('zzzzzzzzz');
         const [response] = await Promise.all([
             page.waitForResponse(response => response.url().includes('/User/Login'), { timeout: 100000 }),
             page.getByRole('button', { name: 'Login' }).click()
         ]);
 
-        await page.getByText('Error!Auth error: Bad Request').isVisible();
+        await loginPage.isErrorAlertVisible();
     });
 
-    test('should show errors, if fields empty', async ({ page }) => {
-        const loginPage = new LoginPage(page);
+    test('should show errors, if fields empty', async ({ page, context }) => {
+        const loginPage = new LoginPage(page, context);
         await allure.step('Click on email field', async () => {
             await loginPage.clickEmailField();
         });
@@ -60,27 +64,33 @@ test.describe('Login form', () => {
         });
     });
 
-    test('should show error, if email field filled, but it is not an email', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await allure.step('Fill email with incorrect format', async () => {
-            await loginPage.fillEmail('test');
-        });
+    test("should show error, if email field filled, but it is not an email", async ({
+      page,
+      context,
+    }) => {
+      const loginPage = new LoginPage(page, context);
+      await allure.step("Fill email with incorrect format", async () => {
+        await loginPage.fillEmail("test");
+      });
 
-        await allure.step('Check if email format error is visible', async () => {
-            await loginPage.isEmailFormatErrorVisible();
-        });
+      await allure.step("Check if email format error is visible", async () => {
+        await loginPage.isEmailFormatErrorVisible();
+      });
     });
 
-    test('should do password visible on eye button click', async ({ page }) => {
-        const loginPage = new LoginPage(page);
-        await allure.step('Click show password button', async () => {
-            await loginPage.clickShowPasswordButton();
-        });
+    test("should do password visible on eye button click", async ({
+      page,
+      context,
+    }) => {
+      const loginPage = new LoginPage(page, context);
+      await allure.step("Click show password button", async () => {
+        await loginPage.clickShowPasswordButton();
+      });
 
-        await allure.step('Check if password input type is text', async () => {
-            const inputType = await loginPage.getPasswordInputType();
-            await expect(inputType).toBe('text');
-        });
+      await allure.step("Check if password input type is text", async () => {
+        const inputType = await loginPage.getPasswordInputType();
+        await expect(inputType).toBe("text");
+      });
     });
 
 });
