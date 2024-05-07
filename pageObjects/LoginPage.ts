@@ -6,15 +6,14 @@ dotenv.config();
 class LoginPage {
   page: Page;
   context: BrowserContext;
-  emailInputSelector = "#outlined-email-input";
-  passwordInputSelector = "#outlined-password-input";
+  emailInputSelector = "#email-input";
+  passwordInputSelector = "#password-input";
   loginButtonSelector = "text=Login";
   showPasswordButtonSelector = '[aria-label="toggle password visibility"]';
   dashboardHeadingSelector = "text=Dashboard";
   errorAlertSelector = "text=Error!Auth error: Bad Request";
   requiredFieldErrorSelector = "text=This field is required";
   emailFormatErrorSelector = "text=It doesn't look like email";
-  loginApiUrl = "https://dev-api.trendos.io/api/v1/User/Login";
 
   constructor(page: Page, context: BrowserContext) {
     this.page = page;
@@ -26,15 +25,13 @@ class LoginPage {
   }
 
   async apiLogin(email: string, password: string) {
-    console.log(email);
-    const response = await this.page.request.post(this.loginApiUrl, {
+    const response = await this.page.request.post('/User/Login', {
       data: {
         password: password,
         email: email,
         token: process.env.RECAPTCHA_TEST_KEY,
       },
     });
-    console.log(response);
     if (response.ok()) {
       const responseBody: { token: string } = await response.json();
       await this.context.addCookies([

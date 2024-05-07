@@ -49,13 +49,13 @@ class RegistrationPage {
       await this.firstNameInput.blur();
     });
     await allure.step('Check validation message for empty first name', async () => {
-      await expect(await this.page.locator("#outlined-firstname-input-helper-text")).toHaveText('This field is required');
+      await expect(await this.page.locator("#firstname-input-helper-text")).toHaveText('This field is required');
     });
     await allure.step('Fill first name with numbers', async () => {
       await this.firstNameInput.fill('111');
     });
     await allure.step('Check validation message for invalid first name', async () => {
-      await expect(await this.page.locator("#outlined-firstname-input-helper-text")).toHaveText('Only english letters allowed');
+      await expect(await this.page.locator("#firstname-input-helper-text")).toHaveText('Only english letters allowed');
     });
   }
   
@@ -65,13 +65,13 @@ class RegistrationPage {
       await this.lastNameInput.blur();
     });
     await allure.step('Check validation message for empty last name', async () => {
-      await expect(await this.page.locator("#outlined-lastname-input-helper-text")).toHaveText('This field is required');
+      await expect(await this.page.locator("#lastname-input-helper-text")).toHaveText('This field is required');
     });
     await allure.step('Fill last name with numbers', async () => {
       await this.lastNameInput.fill('111');
     });
     await allure.step('Check validation message for invalid last name', async () => {
-      await expect(await this.page.locator("#outlined-lastname-input-helper-text")).toHaveText('Only letters allowed');
+      await expect(await this.page.locator("#lastname-input-helper-text")).toHaveText('Only letters allowed');
     });
   }
 
@@ -81,7 +81,7 @@ class RegistrationPage {
       await this.emailInput.blur();
     });
     await allure.step('Check validation message for empty email', async () => {
-      await expect(await this.page.locator("#outlined-email-input-helper-text")).toHaveText('This field is required');
+      await expect(await this.page.locator("#email-input-helper-text")).toHaveText('This field is required');
     });
 
     await ['111', '111@', '111@.com', '111.com'].forEach(async(item) => {
@@ -89,7 +89,7 @@ class RegistrationPage {
         await this.emailInput.fill('111');
       });
       await allure.step(`Check validation message for ${item}`, async () => {
-        await expect(await this.page.locator("#outlined-email-input-helper-text")).toHaveText("It doesn't look like email");
+        await expect(await this.page.locator("#email-input-helper-text")).toHaveText("It doesn't look like email");
       });
     });
    
@@ -114,7 +114,7 @@ class RegistrationPage {
       await this.confirmPasswordInput.fill('111111');
     });
     await allure.step('Check validation message for password mismatch', async () => {
-      await expect(await this.page.locator("#outlined-password_repeat-input-helper-text")).toHaveText('The passwords do not match');
+      await expect(await this.page.locator("#password_repeat-input-helper-text")).toHaveText('The passwords do not match');
     });
   }
 
