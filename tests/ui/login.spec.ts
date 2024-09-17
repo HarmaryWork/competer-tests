@@ -1,5 +1,5 @@
 import test, { expect } from "@playwright/test";
-import LoginPage from "../pageObjects/LoginPage";
+import LoginPage from "../../pageObjects/LoginPage";
 import { allure } from "allure-playwright";
 
 test.beforeEach(async ({ page, context }) => {
@@ -22,7 +22,7 @@ test.describe('Login form', () => {
     });
     await allure.step('Click login button', async () => {
       const [response] = await Promise.all([
-        page.waitForResponse(response => response.url().includes('/User/Login') && response.status() === 200, { timeout: 100000 }),
+        page.waitForResponse(response => response.url().includes('/Profile/Login') && response.status() === 200),
         page.getByRole('button', { name: 'Login' }).click()
       ]);
     })
@@ -39,7 +39,7 @@ test.describe('Login form', () => {
     await loginPage.fillEmail(process.env.EMAIL);
     await loginPage.fillPassword('zzzzzzzzz');
     const [response] = await Promise.all([
-      page.waitForResponse(response => response.url().includes('/User/Login'), { timeout: 100000 }),
+      page.waitForResponse(response => response.url().includes('/Profile/Login')),
       page.getByRole('button', { name: 'Login' }).click()
     ]);
 

@@ -1,4 +1,5 @@
 import { BrowserContext, Page, expect } from "@playwright/test";
+import { allure } from "allure-playwright";
 
 class DashboardPage {
   context: BrowserContext;
@@ -9,6 +10,9 @@ class DashboardPage {
     "Competitors New URLs",
     "Products Keywords Analysis",
   ];
+  segmentsTileSelector = '[data-testid="segments-tile"]';
+
+
 
   constructor(page, context) {
     this.context = context;
@@ -20,6 +24,18 @@ class DashboardPage {
         await expect(this.page).toHaveTitle(header);
     });
   }
+
+  async checkSegmentsAnalysisComponents () {
+    const segmentsTile = this.page.locator(this.segmentsTileSelector);
+    allure.step('Check title',async() => {
+      await expect(segmentsTile).toHaveText("Segment Analysis Over Time");
+    });
+    allure.step('Check Segments dropdown',async() => {
+      await expect(segmentsTile.locator('#checkboxes-tags-demo')).toBeTruthy();
+    });
+  }
+
+
 }
 
 export default DashboardPage;

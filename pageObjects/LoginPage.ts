@@ -21,7 +21,7 @@ class LoginPage {
   }
 
   async navigate() {
-    await this.page.goto("https://dev.trendos.io/login");
+    await this.page.goto("https://stg.trendos.io/login");
   }
 
   async apiLogin(email: string, password: string) {
@@ -32,6 +32,7 @@ class LoginPage {
         token: process.env.RECAPTCHA_TEST_KEY,
       },
     });
+    console.log(response);
     if (response.ok()) {
       const responseBody: { token: string } = await response.json();
       await this.context.addCookies([
@@ -81,7 +82,7 @@ class LoginPage {
     return this.page.waitForResponse(
       (response) =>
         response.url().includes("/User/Login") && response.status() === 200,
-      { timeout: 100000 }
+      { timeout: 15000 }
     );
   }
 
