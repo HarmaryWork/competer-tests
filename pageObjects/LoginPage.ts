@@ -9,7 +9,9 @@ class LoginPage {
   emailInputSelector = "#email-input";
   passwordInputSelector = "#password-input";
   loginButtonSelector = "text=Login";
+  resetPasswordButtonSelector = "[type='submit']";
   showPasswordButtonSelector = '[aria-label="toggle password visibility"]';
+  resetPasswordLink = "text=Forgot password?";
   dashboardHeadingSelector = "text=Dashboard";
   errorAlertSelector = "text=Error!Auth error: Bad Request";
   requiredFieldErrorSelector = "text=This field is required";
@@ -25,7 +27,7 @@ class LoginPage {
   }
 
   async apiLogin(email: string, password: string) {
-    const response = await this.page.request.post('/User/Login', {
+    const response = await this.page.request.post("/User/Login", {
       data: {
         password: password,
         email: email,
@@ -76,6 +78,14 @@ class LoginPage {
 
   async clickShowPasswordButton() {
     await this.page.click(this.showPasswordButtonSelector);
+  }
+
+  async clickResetPasswordButton() {
+    await this.page.click(this.resetPasswordButtonSelector);
+  }
+
+  async clickOnResetPasswordLink() {
+    await this.page.click(this.resetPasswordLink);
   }
 
   async waitForLoginResponse() {

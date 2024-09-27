@@ -5,59 +5,62 @@ import { allure } from "allure-playwright";
 test.beforeEach(async ({ page, context }) => {
   const loginPage = new LoginPage(page, context);
   await loginPage.navigate();
-})
+});
 
-test.describe('Login form', () => {
-  
-  test('should login with right creds', async ({ page, context }) => {
+test.describe("Login form", () => {
+  test("should login with right creds", async ({ page, context }) => {
     const loginPage = new LoginPage(page, context);
-    await allure.step('Fill email', async () => {
+    await allure.step("Fill email", async () => {
       await loginPage.fillEmail(process.env.EMAIL);
-    })
-    await allure.step('Fill password', async () => {
+    });
+    await allure.step("Fill password", async () => {
       await loginPage.fillPassword(process.env.PASSWORD);
-    })
+    });
     await allure.attachment("search-results.png", await page.screenshot(), {
       contentType: "image/png",
     });
-    await allure.step('Click login button', async () => {
+    await allure.step("Click login button", async () => {
       const [response] = await Promise.all([
-        page.waitForResponse(response => response.url().includes('/Profile/Login') && response.status() === 200),
-        page.getByRole('button', { name: 'Login' }).click()
+        page.waitForResponse(
+          (response) =>
+            response.url().includes("/Profile/Login") &&
+            response.status() === 200
+        ),
+        page.getByRole("button", { name: "Login" }).click(),
       ]);
-    })
+    });
 
-    await allure.step('Check first page', async () => {
+    await allure.step("Check first page", async () => {
       await loginPage.isDashboardVisible();
-    })
-
-
+    });
   });
 
-  test('should show error alert, if creds wrong', async ({ page, context }) => {
+  test("should show error alert, if creds wrong", async ({ page, context }) => {
     const loginPage = new LoginPage(page, context);
     await loginPage.fillEmail(process.env.EMAIL);
-    await loginPage.fillPassword('zzzzzzzzz');
+    await loginPage.fillPassword("zzzzzzzzz");
     const [response] = await Promise.all([
-      page.waitForResponse(response => response.url().includes('/Profile/Login')),
-      page.getByRole('button', { name: 'Login' }).click()
+      page.waitForResponse((response) =>
+        response.url().includes("/Profile/Login")
+      ),
+      page.getByRole("button", { name: "Login" }).click(),
     ]);
 
     await loginPage.isErrorAlertVisible();
   });
 
-  test('should show errors, if fields empty', async ({ page, context }) => {
+  test("should show errors, if fields empty", async ({ page, context }) => {
     const loginPage = new LoginPage(page, context);
-    await allure.step('Click on email field', async () => {
+    await allure.step("Click on email field", async () => {
       await loginPage.clickEmailField();
     });
-    await allure.step('Click on password field', async () => {
+    await allure.step("Click on password field", async () => {
       await loginPage.clickPasswordField();
     });
-    await allure.step('Check if email field error is visible', async () => {
+    await allure.step("Check if email field error is visible", async () => {
       await loginPage.isRequiredFieldErrorVisible();
     });
-    await allure.step('Check if password field error is visible', async () => {
+    await allure.step("Check if password field error is visible", async () => {
       await loginPage.isRequiredFieldPasswordVisible();
     });
   });
@@ -91,4 +94,36 @@ test.describe('Login form', () => {
     });
   });
 
+  test("should have an oppotunity to reset password", async ({
+    page,
+    context,
+  }) => {
+    const loginPage = new LoginPage(page, context);
+    await allure.step("Click reset password link", async () => {
+      await loginPage.clickOnResetPasswordLink();
+    });
+
+    await allure.step("Fill email", async () => {
+      await loginPage.fillEmail("maria.h4rlamova@gmail.com");
+    });
+
+    await allure.step("Click on reset button", async () => {
+      await loginPage.clickResetPasswordButton();
+    });
+
+    await allure.step(
+      "Waiting for 200 response from /Profile/ForgotPassword",
+      async () => {
+        const [response] = await Promise.all([
+          page.waitForResponse(
+            (response) =>
+              response.url().includes("/Profile/ForgotPassword") &&
+              response.status() === 200
+          ),
+        ]);
+
+        expect(response.status()).toBe(200);
+      }
+    );
+  });
 });

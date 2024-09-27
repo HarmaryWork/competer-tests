@@ -12,8 +12,6 @@ class DashboardPage {
   ];
   segmentsTileSelector = '[data-testid="segments-tile"]';
 
-
-
   constructor(page, context) {
     this.context = context;
     this.page = page;
